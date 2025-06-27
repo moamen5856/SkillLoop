@@ -1,0 +1,14 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@inject SignInManager<User> signInManger;
+
+
+    @if (signInManger.IsSignedIn(User))
+    {
+            <a asp-action="Profile" asp-controller="Account" class="profile-link">Profile</a>
+    }
+    else
+    {
+            <a class="login-signup" asp-controller="Account" asp-action="Login">Login</a>
+            <a class="login-signup" asp-controller="Account" asp-action="Register">Sign Up</a>
+
+    }

@@ -1,0 +1,41 @@
+﻿@using SkillLoop2.ViewModels;
+@model VerifyEmailViewModel;
+
+
+@{
+    ViewData["Title"] = "Verify Email";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+
+    <div class="container">
+        <main class="login-container">
+            <h2>Welcome<span class="blue-dot"> Back</span></h2>
+
+            <p class="welcome-back">Enter Your Email Address</p>
+             <br />
+
+            <form class="login-form" asp-action="VerifyEmail" method="post">
+                <div class="input-group">
+                    <input asp-for="Email" type="email" id="email" placeholder="Email address">
+                    <i class="fas fa-envelope"></i>
+                    <span asp-validation-for="Email" class="field-error"></span>
+                </div>
+
+
+                <div class="form-actions">
+                    <button type="submit" value="Verify" class="login-button">Login</button>
+                </div>
+            </form>
+        </main>
+
+
+    </div>
+
+    </div>
+</body>
+</html>
+

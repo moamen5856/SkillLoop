@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+
+    <div class="hero">
+        <div class="hero-text">
+            <h1>Discover and Share Creative Projects</h1>
+            <p>
+                From games to websites to innovative AI tools, SkillLoop is the place
+                to showcase and find inspiring work from developers and creators.
+            </p>
+            <a asp-controller="projects" asp-action="Index">Explore Projects</a>
+
+        </div>
+        <div class="hero-img">
+            <img src="~/images/1.jpeg" alt="Hero Image" />
+        </div>
+    </div>
+    <div class="categories">
+        <div class="category-box">
+            <h3>Game Development</h3>
+            <p>Build and share your Unity, Unreal, or indie games.</p>
+        </div>
+        <div class="category-box">
+            <h3>Web Development</h3>
+            <p>Create and explore full-stack and frontend web apps.</p>
+        </div>
+        <div class="category-box">
+            <h3>AI & Machine Learning</h3>
+            <p>Showcase your intelligent solutions and ML models.</p>
+        </div>
+        <div class="category-box">
+            <h3>Cyber Security</h3>
+            <p>Demonstrate your skills in ethical hacking and protection systems.</p>
+        </div>
+        <div class="category-box">
+            <h3>Graphic Design</h3>
+            <p>Share your visual creativity and stunning digital designs.</p>
+        </div>
+    </div>
+
+</body>
+</html>

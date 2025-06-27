@@ -1,0 +1,161 @@
+﻿@model SkillLoop2.Models.Project
+
+@{
+    ViewData["Title"] = "Edit Project";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <main class="upload-container">
+        <h1>Edit Your Project<span class="purple-dot">.</span></h1>
+
+        <form asp-action="Edit" asp-controller="Projects" asp-route-id="@Model.ProjectId" method="post" enctype="multipart/form-data" class="upload-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ProjectId" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-section">
+                <h2>Project Information</h2>
+
+                <div class="input-group">
+                    <label asp-for="ProjectName">Project Title</label>
+                    <input asp-for="ProjectName" type="text" id="projectTitle" value="@Model.ProjectName" required>
+                    <span asp-validation-for="ProjectName" class="text-danger"></span>
+                </div>
+
+                <div class="input-group">
+                    <label asp-for="CategoryId">Project Category</label>
+                    <select asp-for="CategoryId" id="projectCategory" asp-items="ViewBag.CategoryId" required>
+                        <option value="">Select Category</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="input-group">
+                    <label asp-for="Description">Project Description</label>
+                    <textarea asp-for="Description" id="projectDescription" rows="4" required>@Model.Description</textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Project Files</h2>
+
+                <div class="file-upload-area">
+                    <div class="drag-drop-zone" id="dragDropZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag and drop files here or</p>
+                        <button type="button" id="browse-btn" class="browse-btn">Browse Files</button>
+                        <input asp-for="ProjectFiles" type="file" id="fileInput" multiple hidden>
+                    </div>
+                    <div class="file-list" id="fileList">
+                        @if (Model.ProjectFiles != null)
+                        {
+                            foreach (var file in Model.ProjectFiles)
+                            {
+                                <div class="file-item" data-file-id="@file.ProjectFilesId">
+                                    <div class="file-info">
+                                        <i class="fas fa-file"></i>
+                                        <span class="file-name">@file.FileName</span>
+                                        <span class="file-size">(@file.FileSize bytes)</span>
+                                    </div>
+                                    <button type="button" class="delete-btn" data-action="remove-file" data-id="@file.ProjectFilesId">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <span asp-validation-for="ProjectFiles" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Project Images</h2>
+
+                <div class="file-upload-area">
+                    <div class="drag-drop-zone" id="dragDropZone2">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag and drop Images here or</p>
+                        <button type="button" id="browse-btn2" class="browse-btn">Browse Images</button>
+                        <input asp-for="ProjectImages" type="file" id="fileInput2" multiple hidden>
+                    </div>
+                    <div class="file-list" id="fileList2">
+                        @if (Model.ProjectImages != null)
+                        {
+                            foreach (var image in Model.ProjectImages)
+                            {
+                                <div class="file-item" data-image-id="@image.Id">
+                                    <div class="file-info">
+                                        <i class="fas fa-image"></i>
+                                        <span class="file-name">@image.ImageUrl</span>
+                                    </div>
+                                    <button type="button" class="delete-btn" data-action="remove-image" data-id="@image.Id">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <span asp-validation-for="ProjectImages" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-section" id="technologiesSection">
+                <h2>Additional Details</h2>
+
+                <div class="input-group">
+                    <label for="technologies">Technologies Used</label>
+                    <div class="tech-input-container" id="technologiesContainer">
+                        @if (Model.ProjectTechnologies != null && Model.ProjectTechnologies.Any())
+                        {
+                            foreach (var tech in Model.ProjectTechnologies)
+                            {
+                                <div class="tech-input-group" style="margin-top:16px">
+                                    <input type="text" name="ProjectTechnologies" value="@tech.TechologyName" data-file-id="@tech.Id" placeholder="e.g., React, Node.js, MongoDB">
+                                    @if (tech == Model.ProjectTechnologies.First())
+                                    {
+                                        <button type="button" class="add-tech-btn" onclick="addNewTechField()">+</button>
+                                    }
+                                    else
+                                    {
+                                        <button type="button" class="remove-tech-btn" data-file-id="@tech.Id" onclick="this.parentElement.remove()">-</button>
+                                    }
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="tech-input-group">
+                                <input type="text" name="ProjectTechnologies" placeholder="e.g., React, Node.js, MongoDB">
+                                <button type="button" class="add-tech-btn" onclick="addNewTechField()">+</button>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label asp-for="ProjectURL">Project URL (if available)</label>
+                    <input asp-for="ProjectURL" type="url" id="projectUrl" value="@Model.ProjectURL" placeholder="https://...">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Update Project</button>
+                <a asp-action="Index" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </main>
+
+    <script src="~/js/upload-files.js"></script>
+</body>
+</html>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

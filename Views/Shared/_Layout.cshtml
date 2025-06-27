@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - SkillLoop</title>
+    <script type="importmap"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/projects-style.css" />
+    <link rel="stylesheet" href="~/css/reset-password.css">
+    <link rel="stylesheet" href="~/css/sign-up.css">
+    <link rel="stylesheet" href="~/css/upload-files.css">
+    <link rel="stylesheet" href="~/css/WebProjects.css" />
+    <link rel="stylesheet" href="~/css/contact.css">
+    <link href="~/css/about-style.css" rel="stylesheet" />
+    <link href="~/css/Home-style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/log-in.css">
+    <link rel="stylesheet" href="~/css/messages.css">
+    <link href="~/css/project.css" rel="stylesheet" />
+    <link href="~/css/header.css" rel="stylesheet" />
+    @* <link rel="stylesheet" href="~/css/my-projects.css"> *@
+    <link href="~/css/project-style.css" rel="stylesheet"/>
+
+
+
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="~/images/logo.jpg" alt="SkillLoop Logo" />
+            <span>SkillLoop</span>
+        </div>
+        <nav>
+            <ul>
+                <li><a asp-action="Index" asp-controller="Home">Home</a></li>
+                <li><a asp-action="Index" asp-controller="Categories">Projects </a></li>
+                <li><a asp-controller="Home" asp-action="About">About</a></li>
+                <li><a asp-controller="Projects" asp-action="Create">Upload</a></li>
+                <li><a asp-controller="Categories" asp-action="Create">Category</a></li>
+
+            </ul>
+        </nav>
+        <form class="search-login" asp-controller="Projects" asp-action="Index" method="get">
+            <input type="text" name="term" placeholder="Search projects..." />
+            <partial name="_LoginPartial" />
+        </form>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer>
+        <p>
+            &copy; 2025 SkillLoop. All rights reserved. | Built for creators, by
+            creators.
+        </p>
+    </footer>
+    @* <script src="~/js/contact.js"></script> *@
+    @* <script src="~/js/signup.js"></script> *@
+    <script src="~/js/upload-files.js"></script>
+    @* <script src="~/js/reset-password.js"></script> *@
+    <script src="~/js/WebProjects.js"></script>
+    @* <script src="~/js/project.js"></script> *@
+    <script src="~/js/projects.js"></script>
+    @* <script src="~/js/login.js"></script> *@
+    @* <script src="~/js/Massages.js"></script> *@
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

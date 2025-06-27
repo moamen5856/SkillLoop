@@ -1,0 +1,139 @@
+﻿@model SkillLoop2.Models.User
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="~/css/profile.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <a asp-controller="Home" asp-action="Index" class="logo">SkillLoop</a>
+        <div class="user-profile">
+            <div class="user-profile-pic">
+                <img src="@Url.Content(Model.image ?? "~/images/profile.jpg")" alt="Profile Pic">
+            </div>
+            <div class="user-info">
+                <div class="user-name">@Model.FullName</div>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a asp-controller="Home" asp-action="Index" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+            <a asp-controller="UserProjects" asp-action="Index" class="nav-item"><i class="fas fa-th-large"></i><span>Dashboard</span></a>
+            <a href="#" class="nav-item active"><i class="fas fa-cog"></i><span>Settings</span></a>
+            <a asp-action="Logout" asp-controller="Account" class="nav-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+        </nav>
+    </div>
+
+    <div class="main-container">
+        <header class="header">
+            <div class="search-container">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" class="search-input" placeholder="Search...">
+            </div>
+            <div class="user-controls">
+                <button class="notification-btn"><i class="fas fa-bell"></i></button>
+                <div class="user-dropdown">
+                    <img src="@Url.Content(Model.image ?? "~/images/profile.jpg")" alt="User">
+                    <span>@Model.FullName.Split(" ")[0]</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="content">
+            <div class="content-header">
+                <h1 class="page-title">Settings</h1>
+                <div>
+                    <button class="btn btn-cancel" id="cancel-button">Cancel</button>
+                    <button class="btn btn-primary" id="save-button">Save Changes</button>
+                </div>
+            </div>
+
+            <div class="settings-container">
+                <div class="settings-tabs">
+                    <div class="tab-item active">
+                        <i class="fas fa-file-alt"></i>
+                        <span>General Information</span>
+                    </div>
+                </div>
+
+                <div class="settings-form">
+                    <h2 class="section-title">General Information</h2>
+                    <br>
+                <form id="settings-form" asp-route-id="@Model.Id" asp-action="Profile" asp-controller="Account" method="post" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Id" />
+                        <input type="hidden" id="IsPhotoDeleted" name="IsPhotoDeleted" asp-for="IsPhotoDeleted" value="false" />
+                    <h3 class="form-section-title">Profile picture upload</h3>
+                    <div class="profile-upload">
+                        <div class="profile-image">
+                            <img src="@Url.Content(Model.image ?? "~/images/profile.jpg")" alt="Profile Picture" id="profile-image-preview">
+                        </div>
+                        <div class="profile-details">
+                            <div class="name">@Model.FullName</div>
+                            <div class="profile-actions">
+                                <input type="file" id="image-upload" name="imageFile" accept="image/*" style="display: none;">
+                                <button type="button" class="btn btn-primary" id="upload-btn">Upload New Photo</button>
+                                <button type="button" class="btn btn-cancel" id="delete-photo">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="form-section-title">Profile Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" class="form-control" asp-for="FullName" required>
+                            <span asp-validation-for="FullName" class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <input type="email" class="form-control" asp-for="Email" required>
+                            <span asp-validation-for="Email" class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Age</label>
+                            <input type="number" class="form-control" asp-for="Age" required>
+                            <span asp-validation-for="Age" class="error-message"></span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Gender</label>
+                            <select class="form-control" asp-for="Gander" required>
+                                <option value="NotSpecified">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                            <span asp-validation-for="Gander" class="error-message"></span>
+                        </div>
+
+                    </div>
+                </form>
+                    <div class="account-actions">
+                        <a asp-controller="Account" asp-action="ChangePassword" asp-route-username="@Model.UserName" class="account-btn change-password-btn">
+                            <i class="fas fa-key"></i> Change Password
+                        </a>
+                        <form asp-controller="Account" asp-action="Delete" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="account-btn delete-account-btn">
+                                <i class="fas fa-trash-alt"></i> Delete Account
+                            </button>
+                        </form>
+                    </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="~/js/profile.js">
+    </script>
+
+</body>
+</html>

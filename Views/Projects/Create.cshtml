@@ -1,0 +1,117 @@
+﻿@model SkillLoop2.Models.Project
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <main class="upload-container">
+        <h1>Upload Your Project<span class="purple-dot">.</span></h1>
+
+        <form asp-action="Create" asp-controller="Projects"
+              method="post"
+              enctype="multipart/form-data"
+              class="upload-form">
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-section">
+                <h2>Project Information</h2>
+
+
+                <div class="input-group">
+                    <label asp-for="ProjectName">Project Title</label>
+                    <input asp-for="ProjectName" type="text" id="projectTitle" required>
+                    <span asp-validation-for="ProjectName" class="text-danger"></span>
+                </div>
+
+                <div class="input-group">
+                    <label asp-for="CategoryId">Project Category</label>
+                    <select asp-for="CategoryId" id="projectCategory" asp-items="ViewBag.CategoryId" required>
+                        <option value="">Select Category</option>
+                    </select>
+                    <span asp-validation-for="CategoryId" class="text-danger"></span>
+                </div>
+
+                <div class="input-group">
+                    <label asp-for="Description">Project Description</label>
+                    <textarea asp-for="Description" id="projectDescription" rows="4" required></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h2>Project Files</h2>
+
+                <div class="file-upload-area">
+                    <div class="drag-drop-zone" id="dragDropZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag and drop files here or</p>
+                        <button type="button" id="browse-btn" class="browse-btn">Browse Files</button>
+                        <input asp-for="ProjectFiles" type="file" id="fileInput" multiple hidden>
+                    </div>
+                    <div class="file-list" id="fileList">
+                        <!-- Uploaded files will appear here -->
+                    </div>
+                    <span asp-validation-for="ProjectFiles" class="text-danger"></span>
+                </div>
+                </div>
+
+
+                <div class="form-section">
+                    <h2>Project Images</h2>
+
+                <div class="file-upload-area">
+                    <div class="drag-drop-zone" id="dragDropZone2">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag and drop Images here or</p>
+                        <button type="button" id="browse-btn2" class="browse-btn">Browse Images</button>
+                        <input asp-for="ProjectImages" type="file" id="fileInput2" multiple hidden>
+                    </div>
+                    <div class="file-list" id="fileList2">
+                        <!-- Uploaded files will appear here -->
+                    </div>
+                    <span asp-validation-for="ProjectImages" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-section" id="technologiesSection">
+                <h2>Additional Details</h2>
+
+                <div class="input-group">
+                    <label for="technologies">Technologies Used</label>
+                    <div class="tech-input-container" id="technologiesContainer">
+                        <div class="tech-input-group">
+                            <input asp-for="ProjectTechnologies" type="text" name="ProjectTechnologies" placeholder="e.g., React, Node.js, MongoDB">
+                            <button type="button" class="add-tech-btn" onclick="addNewTechField()">
+                                +
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label for="projectUrl">Project URL (if available)</label>
+                    <input type="url" id="projectUrl" placeholder="https://...">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Upload Project</button>
+                <a asp-action="Index" class="cancel-btn">Cancel</a>
+            </div>
+        </form>
+    </main>
+    <script src="~/js/upload-files.js   "></script>
+</body>
+</html>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

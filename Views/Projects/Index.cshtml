@@ -1,0 +1,188 @@
+﻿@model IEnumerable<SkillLoop2.Models.Project>
+
+@{
+    ViewData["Title"] = "Index";
+
+    var currentPage = ViewData["CurrentPage"] as int? ?? 1;
+    var totalPages = ViewData["TotalPages"] as int? ?? 1;
+    var totalItems = ViewData["TotalItems"] as int? ?? 0;
+    var currentSort = ViewData["CurrentSort"] as string ?? "date_desc";
+    var currentTerm = ViewData["CurrentTerm"] as string ?? "";
+
+    int maxPagesToShow = 3;
+    int startPage = 1;
+    int endPage = totalPages;
+
+    if (totalPages > maxPagesToShow)
+    {
+        if (currentPage <= (maxPagesToShow / 2) + 1)
+        {
+            startPage = 1;
+            endPage = maxPagesToShow;
+        }
+        else if (currentPage >= totalPages - (maxPagesToShow / 2))
+        {
+            startPage = totalPages - maxPagesToShow + 1;
+            endPage = totalPages;
+        }
+        else
+        {
+            startPage = currentPage - (maxPagesToShow / 2);
+            endPage = currentPage + (maxPagesToShow / 2);
+        }
+    }
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+</head>
+<body>
+    <div class="main">
+        <div class="container">
+            <div class="row-1">
+                <h1>All Projects</h1>
+                <div style="display: flex; align-items: center; gap: 18px;">
+                    <div class="sort-container">
+                        <label for="sortSelect" class="sort-label">Sort by:</label>
+                        <form method="get" asp-action="Index" style="display:inline;">
+                            <select id="sortSelect" name="sortOrder" class="sort-select" onchange="this.form.submit()">
+                                <option value="date_desc" selected="@(currentSort == "date_desc")">Created Date (Newest)</option>
+                                <option value="date_asc" selected="@(currentSort == "date_asc")">Created Date (Oldest)</option>
+                                <option value="name_asc" selected="@(currentSort == "name_asc")">Project Name (A-Z)</option>
+                                <option value="name_desc" selected="@(currentSort == "name_desc")">Project Name (Z-A)</option>
+                            </select>
+                            <input type="hidden" name="page" value="@currentPage" />
+                            <input type="hidden" name="term" value="@currentTerm" />
+                        </form>
+                    </div>
+                    <a asp-controller="Projects" asp-action="Create">+Upload Project</a>
+                </div>
+            </div>
+
+            <div class="row-2">
+                @foreach (var project in Model)
+                {
+                    var firstImage = project.ProjectImages?.First().ImageUrl;
+                    var imageUrl = firstImage != null ? firstImage : "/images/1.jpeg";
+                    <div class="col-1">
+                        <img src="@imageUrl" alt="">
+                        <h3>@project.ProjectName</h3>
+                        <p>@project.Description</p>
+                        <p>@project.PublishDate</p>
+                        <div class="btn">
+                            <a asp-controller="Projects" asp-action="Details" asp-route-id="@project.ProjectId">View</a>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            @if (totalPages > 1)
+            {
+                <nav aria-label="Page navigation" class="pagination-container">
+                    <ul class="pagination">
+                        <li class="page-item skip @(currentPage - 5 < 1 ? "disabled" : "")">
+                            @if (currentPage - 5 < 1)
+                            {
+                                <a href="#" tabindex="-5" class="skip-btn">&lt;&lt;</a>
+                            }
+                            else
+                            {
+                                <a asp-action="Index"
+                                   asp-route-page="@(currentPage - 5)"
+                                   asp-route-sortOrder="@currentSort"
+                                   asp-route-term="@currentTerm"
+                                   class="skip-btn">&lt;&lt;</a>
+                            }
+                        </li>
+                        <!-- Previous -->
+                        <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                            @if (currentPage == 1)
+                            {
+                                <a href="#" tabindex="-1">&lt;</a>
+                            }
+                            else
+                            {
+                                <a asp-action="Index"
+                                   asp-route-page="@(currentPage - 1)"
+                                   asp-route-sortOrder="@currentSort"
+                                   asp-route-term="@currentTerm">&lt;</a>
+                            }
+                        </li>
+                        <!-- First page and ... -->
+                        @if (startPage > 1)
+                        {
+                            <li class="page-item">
+                                <a asp-action="Index"
+                                   asp-route-page="1"
+                                   asp-route-sortOrder="@currentSort"
+                                   asp-route-term="@currentTerm">1</a>
+                            </li>
+                            @if (startPage > 2)
+                            {
+                                <li class="page-item disabled"><span>...</span></li>
+                            }
+                        }
+                        <!-- Page Numbers -->
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a asp-action="Index"
+                                   asp-route-page="@i"
+                                   asp-route-sortOrder="@currentSort"
+                                   asp-route-term="@currentTerm"
+                                   class="@(i == currentPage ? "active" : "")">@i</a>
+                            </li>
+                        }
+                        <!-- ... and last page -->
+                        @if (endPage < totalPages)
+                        {
+                            if (endPage < totalPages - 1)
+                            {
+                                <li class="page-item disabled"><span>...</span></li>
+                            }
+                            <li class="page-item">
+                                <a asp-action="Index"
+                                   asp-route-page="@totalPages"
+                                   asp-route-sortOrder="@currentSort"
+                                   asp-route-term="@currentTerm">@totalPages</a>
+                            </li>
+                        }
+                        <!-- Next -->
+                        <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                            @if (currentPage == totalPages)
+                            {
+                                <a href="#" tabindex="-1">&gt;</a>
+                            }
+                            else
+                            {
+                                <a asp-action="Index"
+                                   asp-route-page="@(currentPage + 1)"
+                                   asp-route-sortOrder="@currentSort"
+                                   asp-route-term="@currentTerm">&gt;</a>
+                            }
+                        </li>
+                        <li class="page-item skip @(currentPage + 5 > totalPages ? "disabled" : "")">
+                            @if (currentPage + 5 > totalPages)
+                            {
+                                <a href="#" tabindex="-5" class="skip-btn">&gt;&gt;</a>
+                            }
+                            else
+                            {
+                                <a asp-action="Index"
+                                   asp-route-page="@(currentPage + 5)"
+                                   asp-route-sortOrder="@currentSort"
+                                   asp-route-term="@currentTerm"
+                                   class="skip-btn">&gt;&gt;</a>
+                            }
+                        </li>
+                    </ul>
+                </nav>
+            }
+        </div>
+    </div>
+</body>
+</html>

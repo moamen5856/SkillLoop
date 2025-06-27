@@ -1,0 +1,164 @@
+﻿@using System.Security.Claims
+@model SkillLoop2.ViewModels.ProjectDetailsViewModel
+
+
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<body>
+    <div class="content-wrapper">
+        <div class="main-content">
+            <div class="main-image-container">
+                <div class="main-square">
+                    <img src="@Model.Project.ProjectImages.First().ImageUrl"
+                    alt="Main banner"
+                    class="large-image" />
+                </div>
+            </div>
+
+            <div class="small-images-section">
+                @foreach(var image in Model.Project.ProjectImages)
+                {
+                    <div class="small-square">
+                        <img src="@image.ImageUrl" class="small-image" />
+                    </div>
+                }
+            </div>
+
+            <div class="project-info">
+                <div class="project-header">
+                    <div class="project-name">@Model.Project.ProjectName</div>
+                    <div class="rating-container">
+                        <!-- عرض متوسط التقييم -->
+                        <span>
+                            Total Reviews : @Model.TotalReviews
+                        </span>
+                        <div class="average-rating">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="@(i <= Model.AverageRating ? "fas" : "far") fa-star"></i>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="interaction-container">
+                    <div class="like-container" data-project-id="@Model.Project.ProjectId">
+                        <button class="like-btn @(Model.UserLike == 1 ? "active" : "")">
+                            <i class="fas fa-thumbs-up"></i> Like
+                        </button>
+                        <button class="dislike-btn @(Model.UserLike == 0 ? "active" : "")">
+                            <i class="fas fa-thumbs-down"></i> Dislike
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comments-section">
+                <h2>What Our Students Say</h2>
+
+                @foreach (var review in Model.Reviews)
+                {
+                    @foreach(var comment in review.Comments)
+                    {
+                        <div class="comment dynamic-comment">
+                            <div class="comment-avatar">
+                                <img class="comment-avatar" src="@comment.Review.User.image.Substring(1)" alt="Alternate Text" />
+                            </div>
+                            <div class="comment-content">
+                                <div class="comment-author">@review.User.FullName</div>
+                                @if(userId == comment.Review.UserId)
+                                {
+                                    <form asp-controller="Comments" asp-action="Delete"  method="POST">
+                                        <input type="hidden" name="projectID" value="@Model.Project.ProjectId"/>
+                                        <input type="hidden" name="id" value="@comment.CommentId" />
+                                        <button type="submit" class="delete-comment btn-danger">Delete Review</button>
+                                    </form>
+                                }
+                                <div class="comment-text">@comment.CommentContent</div>
+                                <div class="comment-date">@comment.CommentDate</div>
+                            </div>
+                        </div>
+                    }
+                }
+
+                <div class="comment-form">
+                    <h3>Leave Your Review</h3>
+                        <div class="user-rating">
+                            <div class="star-rating">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <form method="post" asp-action="SubmitRating" asp-controller="Projects">
+                                        <input type="hidden" name="projectId" value="@Model.Project.ProjectId" />
+                                        <input type="hidden" name="rating" value="@i" />
+                                        <button type="submit" style="background:none; border:none; cursor:pointer; display:inline-block;float:left;">
+                                            <i class="@(Model.UserRating.HasValue && i <= Model.UserRating.Value ? "fas" : "far") fa-star"></i>
+                                        </button>
+                                    </form>
+                                }
+                            </div>
+                            <br />
+                        </div>
+                    <form asp-controller="Comment" asp-action="Create" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <input type="hidden" name="projectId" id="projectId" value="@Model.Project.ProjectId" />
+                            <label for="comment">Review</label>
+                            <textarea id="comment" name="commentContent" required></textarea>
+                        </div>
+                        <button type="submit" class="send-comment submit-btn">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section-container">
+            <div class="content-section">
+                <h2>About @Model.Project.ProjectName</h2>
+                <div class="project-description">
+                    <p>
+                        SkillLoop is a comprehensive programming learning platform
+                        designed to help aspiring developers master modern technologies
+                        through hands-on projects and expert guidance.
+                    </p>
+
+                    <h3>Project Features:</h3>
+                    <ul>
+                        <li>Interactive coding environment with real-time feedback</li>
+                        <li>Project-based learning approach</li>
+                        <li>Support for multiple programming languages</li>
+                        <li>Progress tracking and achievement system</li>
+                        <li>Community collaboration features</li>
+                    </ul>
+
+                    <h3>Technologies Used:</h3>
+                    <div class="tech-stack">
+                        @foreach(var tech in Model.Project.ProjectTechnologies)
+                        {
+                            <span class="tech-tag">@tech.TechologyName.ToUpper()</span>
+                        }
+                    </div>
+                    <form asp-controller="ProjectFiles" asp-action="DownloadProjectFiles" method="get">
+                        <input type="hidden" name="projectId" value="@Model.Project.ProjectId" />
+                        <button type="submit" class="download-btn">
+                            <i class="fas fa-download"></i> Download Code
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <script src="~/js/project.js"></script>
+</body>
+</html>
+
+
